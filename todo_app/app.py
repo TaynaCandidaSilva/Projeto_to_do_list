@@ -1,4 +1,3 @@
-from flask import Flask, jsonify
 from database import db, app
 from models import Task
 
