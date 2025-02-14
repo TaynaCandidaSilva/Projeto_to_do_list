@@ -1,20 +1,21 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, render_template
 from database import db
 from models import Tarefa
 
 routes = Blueprint("routes", __name__)
 
-@routes.route("/", methods=["POST"])
+@routes.route("/", methods=["GET", "POST"])
 def criar_tarefa():
-    dados = request.get_json()
+    if request.method == "POST":
+        titulo = request.form.get("titulo")
+        descricao = "Descrição da tarefa" 
+        concluida = False
 
-    titulo = dados.get("titulo")
-    descricao = dados.get("descricao")
-    concluida = dados.get("concluida", False)
+        nova_tarefa = Tarefa(titulo, descricao, concluida)
 
-    nova_tarefa = Tarefa(titulo, descricao, concluida)
+        db.session.add(nova_tarefa)
+        db.session.commit()
 
-    db.session.add(nova_tarefa)
-    db.session.commit()
-    return jsonify({"mensagem": "Tarefa criada com sucesso!"}),201
+    tarefas = Tarefa.query.all()
 
+    return render_template("index.html", tarefas=tarefas)
