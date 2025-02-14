@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template
+from flask import Blueprint, redirect, request, render_template, url_for
 from database import db
 from models import Tarefa
 
@@ -8,13 +8,14 @@ routes = Blueprint("routes", __name__)
 def criar_tarefa():
     if request.method == "POST":
         titulo = request.form.get("titulo")
-        descricao = "Descrição da tarefa" 
         concluida = False
 
-        nova_tarefa = Tarefa(titulo, descricao, concluida)
+        nova_tarefa = Tarefa(titulo, concluida)
 
         db.session.add(nova_tarefa)
         db.session.commit()
+
+        return redirect(url_for("routes.criar_tarefa"))
 
     tarefas = Tarefa.query.all()
 

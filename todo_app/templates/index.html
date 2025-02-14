@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciador de tarefas</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
 </head>
 <body>
     <div class="container">
         <h1>Lista de tarefas</h1>
-
         <form action="/" method="POST">
             <input type="text" name="titulo" placeholder="Adicione a sua tarefa" required>
             <button type="submit">Adicionar</button>
@@ -19,7 +19,7 @@
         <ul>
             {% for tarefa in tarefas %}
                 <li class="{% if tarefa.concluida %}completed{% endif %}">
-                    {{ tarefa.titulo }} - {{ tarefa.descricao }}
+                    {{ tarefa.titulo }}
                     {% if not tarefa.concluida %}
                         <button>Concluir</button>
                     {% endif %}
