@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, request, render_template, url_for
+from flask import Blueprint, redirect, request, render_template, url_for, jsonify
 from database import db
 from models import Tarefa
 
@@ -20,3 +20,16 @@ def criar_tarefa():
     tarefas = Tarefa.query.all()
 
     return render_template("index.html", tarefas=tarefas)
+
+@routes.route('/atualizar_tarefa/<int:tarefa_id>', methods=['POST'])
+def atualizar_tarefa(tarefa_id):
+    data = request.get_json()
+    tarefa = Tarefa.query.get(tarefa_id)
+
+    if not tarefa:
+        return jsonify({"success": False, "error": "Tarefa não encontrada"}), 404
+
+    tarefa.concluida = data.get("concluida", False)
+    db.session.commit()
+
+    return jsonify({"success": True})
