@@ -27,6 +27,10 @@ h1 {
 
 form {
     margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 input {
@@ -36,7 +40,6 @@ input {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
-    margin-right: 10px;
 }
 
 button {
@@ -47,6 +50,7 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
+    white-space: nowrap;
 }
 
 button:hover {
@@ -69,11 +73,39 @@ li {
     justify-content: space-between;
     align-items: center;
     color: #333;
+    gap: 10px; 
+}
+
+.task-container {
+    display: flex;
+    align-items: center;
+    gap: 5px; 
+    flex-grow: 1;
+}
+
+.task-text {
+    text-align: left;
+    flex-grow: 1;
+    color: black;
+    transition: color 0.3s, text-decoration 0.3s;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-right: 5px; 
+}
+
+input[type="checkbox"]:checked + .task-text {
+    color: #6c757d;
+    text-decoration: line-through;
 }
 
 li span {
     font-size: 0.9rem;
-    color: #888;
+    color: black;
+    text-align: left;
 }
 
 li.completed {

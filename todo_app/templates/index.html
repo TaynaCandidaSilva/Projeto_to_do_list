@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciador de tarefas</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
 </head>
 <body>
     <div class="container">
@@ -19,13 +18,51 @@
         <ul>
             {% for tarefa in tarefas %}
                 <li class="{% if tarefa.concluida %}completed{% endif %}">
-                    {{ tarefa.titulo }}
-                    {% if not tarefa.concluida %}
-                        <button>Concluir</button>
-                    {% endif %}
+                    <div class="task-container">
+                        <input type="checkbox" class="task-checkbox" data-id="{{ tarefa.id_tarefa }}" {% if tarefa.concluida %}checked{% endif %}>
+                        <span class="task-text">{{ tarefa.titulo }}</span>
+                    </div>
                 </li>
             {% endfor %}
         </ul>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".task-checkbox").forEach(checkbox => {
+                checkbox.addEventListener("change", function() {
+                    const tarefaId = this.getAttribute("data-id");
+                    const concluida = this.checked;
+                    const taskItem = this.closest("li");
+
+                    fetch(`/atualizar_tarefa/${tarefaId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ concluida: concluida })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            
+                            if (concluida) {
+                                taskItem.classList.add("completed");
+                            } else {
+                                taskItem.classList.remove("completed");
+                            }
+                        } else {
+                            alert("Erro ao atualizar a tarefa.");
+                            this.checked = !concluida;
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Erro:", error);
+                        this.checked = !concluida;
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>
