@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Tarefa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Tarefa</h1>
+
+        <form action="" method="POST">
+            <label for="titulo">Título da tarefa:</label><br>
+            <input type="text" id="titulo" name="titulo" value="{{ tarefa.titulo }}" required><br><br>
+
+            <!-- Se você quiser editar a descrição depois, pode adicionar aqui -->
+
+            <button type="submit">Salvar</button>
+            <a href="{{ url_for('routes.criar_tarefa') }}">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>

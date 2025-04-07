@@ -33,3 +33,13 @@ def atualizar_tarefa(tarefa_id):
     db.session.commit()
 
     return jsonify({"success": True})
+
+@routes.route('/tarefas/editar/<int:id>', methods=['GET', 'POST'])
+def editar_tarefa(id):
+   
+    tarefa = Tarefa.query.get_or_404(id)
+    if request.method == 'POST':
+        tarefa.titulo = request.form['titulo']
+        db.session.commit()
+        return redirect(url_for('routes.criar_tarefa'))  
+    return render_template('editar_tarefa.html', tarefa=tarefa)
