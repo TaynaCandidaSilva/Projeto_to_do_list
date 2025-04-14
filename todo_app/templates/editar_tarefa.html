@@ -15,10 +15,8 @@
             <label for="titulo">Título da tarefa:</label><br>
             <input type="text" id="titulo" name="titulo" value="{{ tarefa.titulo }}" required><br><br>
 
-            <!-- Se você quiser editar a descrição depois, pode adicionar aqui -->
-
             <button type="submit">Salvar</button>
-            <a href="{{ url_for('routes.criar_tarefa') }}">Cancelar</a>
+            <a href="{{ url_for('routes.criar_tarefa') }}" class="btn-cancelar">Cancelar</a>
         </form>
     </div>
 </body>
