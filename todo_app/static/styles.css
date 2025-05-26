@@ -143,3 +143,8 @@ li button {
 li button:hover {
     background-color: #218838;
 }
+
+.action-icons {
+    display: flex;
+    gap: 15px;
+}

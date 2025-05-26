@@ -6,7 +6,6 @@
     <title>Gerenciador de tarefas</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
 </head>
 <body>
     <div class="container">
@@ -15,25 +14,26 @@
             <input type="text" name="titulo" placeholder="Adicione a sua tarefa" required>
             <button type="submit">Adicionar</button>
         </form>
-    
-
-        <!-- Lista de tarefas -->
-        <ul>
+        <ul class="task-list">
             {% for tarefa in tarefas %}
-                <li class="{% if tarefa.concluida %}completed{% endif %}">
-                    <div class="task-container" style="display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" class="task-checkbox" data-id="{{ tarefa.id_tarefa }}" {% if tarefa.concluida %}checked{% endif %}>
-                            <span class="task-text">{{ tarefa.titulo }}</span>
-                        </div>
+            <li class="{% if tarefa.concluida %}completed{% endif %}">
+                <div class="task-container" style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" class="task-checkbox" data-id="{{ tarefa.id_tarefa }}" {% if tarefa.concluida %}checked{% endif %}>
+                        <span class="task-text">{{ tarefa.titulo }}</span>
+                    </div>
+                    <div class="action-icons">
                         <a href="/tarefas/editar/{{ tarefa.id_tarefa }}" title="Editar">
                             <i class="bi bi-pencil"></i>
                         </a>
+                        <a href="#" class="delete-task" data-id="{{ tarefa.id_tarefa }}" title="Excluir">
+                            <i class="bi bi-trash"></i>
+                        </a>
                     </div>
-                </li>
+                </div>
+            </li>
             {% endfor %}
         </ul>
-        
     </div>
 
     <script>
@@ -43,23 +43,19 @@
                     const tarefaId = this.getAttribute("data-id");
                     const concluida = this.checked;
                     const taskItem = this.closest("li");
-
+            
                     fetch(`/atualizar_tarefa/${tarefaId}`, {
                         method: "POST",
                         headers: {
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content
                         },
                         body: JSON.stringify({ concluida: concluida })
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            
-                            if (concluida) {
-                                taskItem.classList.add("completed");
-                            } else {
-                                taskItem.classList.remove("completed");
-                            }
+                            taskItem.classList.toggle("completed", concluida);
                         } else {
                             alert("Erro ao atualizar a tarefa.");
                             this.checked = !concluida;
@@ -70,6 +66,42 @@
                         this.checked = !concluida;
                     });
                 });
+            });
+            
+            document.addEventListener("click", function(event) {
+                const deleteBtn = event.target.closest(".delete-task");
+                
+                if (deleteBtn) {
+                    event.preventDefault();
+                    const tarefaId = deleteBtn.getAttribute("data-id");
+                    const taskItem = deleteBtn.closest("li");
+                    
+                    if (confirm("Tem certeza que deseja excluir esta tarefa?")) {
+                        fetch(`/excluir_tarefa/${tarefaId}`, {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error("Erro na requisição");
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                taskItem.style.transition = "opacity 0.3s";
+                                taskItem.style.opacity = "0";
+                                setTimeout(() => taskItem.remove(), 300);
+                            } else {
+                                throw new Error(data.message || "Erro ao excluir");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Erro:", error);
+                            alert(error.message);
+                        });
+                    }
+                }
             });
         });
     </script>

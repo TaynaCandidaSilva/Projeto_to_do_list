@@ -43,3 +43,18 @@ def editar_tarefa(id):
         db.session.commit()
         return redirect(url_for('routes.criar_tarefa'))  
     return render_template('editar_tarefa.html', tarefa=tarefa)
+
+@routes.route('/excluir_tarefa/<int:id>', methods=['DELETE'])
+def excluir_tarefa(id):
+    try:
+        tarefa = Tarefa.query.get_or_404(id)
+        db.session.delete(tarefa)
+        db.session.commit()
+        return jsonify({"success": True, "message": "Tarefa excluída com sucesso!"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "success": False,
+            "error": str(e),
+            "message": "Falha ao excluir tarefa"
+        }), 500
